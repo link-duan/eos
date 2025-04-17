@@ -132,3 +132,29 @@ type signOptions struct {
 func DefaultSignOptions() *signOptions {
 	return &signOptions{}
 }
+
+type listObjectV2Options struct {
+	continuationToken *string
+	delimiter         *string
+	maxKeys           *int64
+}
+
+type ListObjectV2Option func(l *listObjectV2Options)
+
+func ListObjectWithContinuationToken(continuationToken *string) ListObjectV2Option {
+	return func(l *listObjectV2Options) {
+		l.continuationToken = continuationToken
+	}
+}
+
+func ListObjectWithDelimiter(delimiter *string) ListObjectV2Option {
+	return func(l *listObjectV2Options) {
+		l.delimiter = delimiter
+	}
+}
+
+func ListObjectWithMaxKeys(maxKeys *int64) ListObjectV2Option {
+	return func(l *listObjectV2Options) {
+		l.maxKeys = maxKeys
+	}
+}

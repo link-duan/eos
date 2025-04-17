@@ -4,14 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/multierr"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"go.uber.org/multierr"
 )
+
+var _ Client = (*LocalFile)(nil)
 
 // LocalFile is the implementation based on local files.
 // For desktop APP or test.
@@ -23,6 +26,11 @@ type LocalFile struct {
 	// store in memory
 	// TODO persistent
 	meta map[string]map[string]string
+}
+
+// ListObjectV2 implements Client.
+func (l *LocalFile) ListObjectV2(ctx context.Context, key string, prefix string, options ...ListObjectV2Option) (*ListObjectV2Result, error) {
+	panic("unimplemented")
 }
 
 func NewLocalFile(path string) (*LocalFile, error) {

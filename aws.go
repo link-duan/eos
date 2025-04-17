@@ -447,6 +447,41 @@ func (a *S3) ListObject(ctx context.Context, key string, prefix string, marker s
 	return keys, nil
 }
 
+func (a *S3) ListObjectV2(ctx context.Context, key string, prefix string, options ...ListObjectV2Option) (*ListObjectV2Result, error) {
+	var opts listObjectV2Options
+	for _, opt := range options {
+		opt(&opts)
+	}
+
+	bucketName, _, err := a.getBucketAndKey(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+	listRes, err := a.client.ListObjectsV2WithContext(ctx, &s3.ListObjectsV2Input{
+		Bucket:            aws.String(bucketName),
+		ContinuationToken: opts.continuationToken,
+		Delimiter:         opts.delimiter,
+		MaxKeys:           opts.maxKeys,
+		Prefix:            aws.String(prefix),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	result := &ListObjectV2Result{
+		ContinuationToken: listRes.ContinuationToken,
+	}
+	for _, p := range listRes.CommonPrefixes {
+		result.CommonPrefixes = append(result.CommonPrefixes, *p.Prefix)
+	}
+	for _, c := range listRes.Contents {
+		result.Object = append(result.Object, &Object{
+			Key: *c.Key,
+		})
+	}
+	return result, nil
+}
+
 func (a *S3) SignURL(ctx context.Context, key string, expired int64, options ...SignOptions) (string, error) {
 	bucketName, key, err := a.getBucketAndKey(ctx, key)
 	if err != nil {
