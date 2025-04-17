@@ -25,6 +25,11 @@ type OSS struct {
 	compressor Compressor
 }
 
+// ListObjectV2 implements Client.
+func (ossClient *OSS) ListObjectV2(ctx context.Context, key string, prefix string, options ...ListObjectV2Option) (*ListObjectV2Result, error) {
+	panic("unimplemented")
+}
+
 // 返回带prefix的key
 func (ossClient *OSS) keyWithPrefix(key string) string {
 	return ossClient.cfg.Prefix + key
