@@ -46,13 +46,19 @@ type Client interface {
 }
 
 type ListObjectV2Result struct {
-	CommonPrefixes    []string
-	Object            []*Object
+	CommonPrefixes []string
+	Object         []*Object
+	// ContinuationToken 下一页的 token，传给 ListObjectWithContinuationToken 继续列举；没有更多结果时为 nil
 	ContinuationToken *string
+	// IsTruncated 是否还有更多结果
+	IsTruncated bool
 }
 
 type Object struct {
-	Key string
+	Key          string
+	Size         int64
+	ETag         string
+	LastModified time.Time
 }
 
 func newStorage(name string, cfg *BucketConfig, logger *elog.Component) (Client, error) {
